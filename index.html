@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Page Project</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <div class="container">
+        <input type="text" id="textInput" placeholder="Enter some text">
+        <button id="displayButton">Display Text</button>
+        <!-- <button id="fetchButton">Fetch Data</button> -->
+        <!-- <button id="fetchImagesButton">Fetch Images</button> -->
+
+        <!-- Dropdowns for sorting -->
+        <div class="sorting">
+            <select id="brandSelect">
+                <option value="">Select Brand</option>
+            </select>
+            <select id="yearSelect">
+                <option value="">Select Year</option>
+            </select>
+            <select id="modelSelect">
+                <option value="">Select Model</option>
+            </select>
+            <button id="sortButton">Sort Images</button>
+        </div>
+
+        <button id="returnButton" style="display: none;">Return to Main Menu</button>
+
+        <div id="outputField"></div>
+    </div>
+    <script src="scripts/script.js"></script>
+</body>
+</html>
