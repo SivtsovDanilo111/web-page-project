@@ -145,24 +145,24 @@ function populateDropdowns() {
     });
 }
 
-function resetToMainMenu() {
-    const brandSelect = document.getElementById('brandSelect');
-    const yearSelect = document.getElementById('yearSelect');
-    const modelSelect = document.getElementById('modelSelect');
-    const outputField = document.getElementById('outputField');
-    const returnButton = document.getElementById('returnButton');
+// function resetToMainMenu() {
+//     const brandSelect = document.getElementById('brandSelect');
+//     const yearSelect = document.getElementById('yearSelect');
+//     const modelSelect = document.getElementById('modelSelect');
+//     const outputField = document.getElementById('outputField');
+//     const returnButton = document.getElementById('returnButton');
 
-    // Reset dropdowns
-    brandSelect.value = '';
-    yearSelect.innerHTML = '<option value="">Select Year</option>';
-    modelSelect.innerHTML = '<option value="">Select Model</option>';
+//     // Reset dropdowns
+//     brandSelect.value = '';
+//     yearSelect.innerHTML = '<option value="">Select Year</option>';
+//     modelSelect.innerHTML = '<option value="">Select Model</option>';
 
-    // Clear displayed images
-    outputField.innerHTML = '';
+//     // Clear displayed images
+//     outputField.innerHTML = '';
 
-    // Hide the return button
-    returnButton.style.display = 'none';
-}
+//     // Hide the return button
+//     returnButton.style.display = 'none';
+// }
 
 // Show the return button when sorting is applied
 function displayFilteredImages() {
@@ -178,13 +178,17 @@ function displayFilteredImages() {
             const img = document.createElement('img');
             img.src = imageUrl;
             img.alt = `${brand} ${model} ${year}`;
+            img.style.display = 'flex';
+            img.style.justifyContent = 'center';
+            img.style.borderRadius = '8px';
             img.style.width = '200px'; // Adjust size as needed
             img.style.margin = '10px';
+
             outputField.appendChild(img);
         });
 
         // Show the return button
-        returnButton.style.display = 'block';
+        // returnButton.style.display = 'block';
     } else {
         outputField.textContent = 'No images found for the selected criteria.';
     }
@@ -192,4 +196,28 @@ function displayFilteredImages() {
 
 // Event listeners
 document.getElementById('sortButton').addEventListener('click', displayFilteredImages);
-document.getElementById('returnButton').addEventListener('click', resetToMainMenu);
+// document.getElementById('returnButton').addEventListener('click', resetToMainMenu);
+
+document.addEventListener("DOMContentLoaded", () => {
+    const imageContainer = document.querySelector(".image-container");
+
+    // Завантаження джерел картинок із JSON
+    fetch("image_sources.json")
+        .then((response) => response.json())
+        .then((images) => {
+            images.forEach((src) => {
+                const img = document.createElement("img");
+                img.src = src;
+
+                // Якщо картинка не завантажується, додаємо клас "hidden"
+                img.onerror = () => {
+                    img.classList.add("hidden");
+                };
+
+                imageContainer.appendChild(img);
+            });
+        })
+        .catch((error) => {
+            console.error("Error loading images:", error);
+        });
+});
