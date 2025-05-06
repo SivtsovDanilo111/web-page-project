@@ -155,13 +155,11 @@ function populateDropdowns() {
     });
 }
 
-// Show the return button when sorting is applied
 function displayFilteredImages() {
     const brand = document.getElementById('brandSelect').value;
     const year = document.getElementById('yearSelect').value;
     const model = document.getElementById('modelSelect').value;
     const outputField = document.getElementById('outputField');
-    const returnButton = document.getElementById('returnButton');
     outputField.innerHTML = ''; // Clear previous content
 
     if (brand && year && model && sortedData[brand][year][model]) {
@@ -182,14 +180,68 @@ function displayFilteredImages() {
                 }
             };
 
+            // Додаємо обробник подій для натискання на картинку
+            img.addEventListener('click', () => {
+                showImageModal(imageUrl, brand, model, year);
+            });
+
             outputField.appendChild(img);
         });
-
-        // Show the return button
-        // returnButton.style.display = 'block';
     } else {
         outputField.textContent = 'No images found for the selected criteria.';
     }
+}
+
+// Функція для показу модального вікна з картинкою та інформацією
+function showImageModal(imageUrl, brand, model, year) {
+    // Створюємо затемнення
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    overlay.style.zIndex = '1000';
+
+    // Створюємо контейнер для збільшеної картинки та інформації
+    const modalContent = document.createElement('div');
+    modalContent.style.position = 'relative';
+    modalContent.style.textAlign = 'center';
+    modalContent.style.color = 'white';
+
+    // Створюємо збільшену картинку
+    const enlargedImg = document.createElement('img');
+    enlargedImg.src = imageUrl;
+    enlargedImg.alt = `${brand} ${model} ${year}`;
+    enlargedImg.style.maxWidth = '80%';
+    enlargedImg.style.maxHeight = '80%';
+    enlargedImg.style.borderRadius = '8px';
+    enlargedImg.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.5)';
+
+    // Створюємо текст з інформацією
+    const infoText = document.createElement('p');
+    infoText.textContent = `Brand: ${brand}, Model: ${model}, Year: ${year}`;
+    infoText.style.marginTop = '20px';
+    infoText.style.fontSize = '18px';
+
+    // Додаємо картинку та текст до контейнера
+    modalContent.appendChild(enlargedImg);
+    modalContent.appendChild(infoText);
+
+    // Додаємо контейнер до затемнення
+    overlay.appendChild(modalContent);
+
+    // Додаємо затемнення до документа
+    document.body.appendChild(overlay);
+
+    // Закриття модального вікна при натисканні на затемнення
+    overlay.addEventListener('click', () => {
+        overlay.remove();
+    });
 }
 
 // Event listeners
