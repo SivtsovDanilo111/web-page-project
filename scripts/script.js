@@ -45,6 +45,7 @@ function displayImages() {
                 const img = document.createElement('img');
                 img.src = imageUrl;
                 img.alt = key;
+                
                 img.style.width = '200px'; // Adjust size as needed
                 img.style.margin = '10px';
                 outputField.appendChild(img);
@@ -104,13 +105,16 @@ function populateDropdowns() {
     yearSelect.innerHTML = '<option value="">Select Year</option>';
     modelSelect.innerHTML = '<option value="">Select Model</option>';
 
+    // Сортуємо бренди в алфавітному порядку
+    const sortedBrands = Object.keys(sortedData).sort();
+
     // Populate brand dropdown
-    for (const brand in sortedData) {
+    sortedBrands.forEach(brand => {
         const option = document.createElement('option');
         option.value = brand;
         option.textContent = brand;
         brandSelect.appendChild(option);
-    }
+    });
 
     // Update year dropdown when brand changes
     brandSelect.addEventListener('change', () => {
@@ -119,12 +123,15 @@ function populateDropdowns() {
         modelSelect.innerHTML = '<option value="">Select Model</option>';
 
         if (selectedBrand && sortedData[selectedBrand]) {
-            for (const year in sortedData[selectedBrand]) {
+            // Сортуємо роки в алфавітному порядку
+            const sortedYears = Object.keys(sortedData[selectedBrand]).sort();
+
+            sortedYears.forEach(year => {
                 const option = document.createElement('option');
                 option.value = year;
                 option.textContent = year;
                 yearSelect.appendChild(option);
-            }
+            });
         }
     });
 
@@ -135,34 +142,18 @@ function populateDropdowns() {
         modelSelect.innerHTML = '<option value="">Select Model</option>';
 
         if (selectedBrand && selectedYear && sortedData[selectedBrand][selectedYear]) {
-            for (const model in sortedData[selectedBrand][selectedYear]) {
+            // Сортуємо моделі в алфавітному порядку
+            const sortedModels = Object.keys(sortedData[selectedBrand][selectedYear]).sort();
+
+            sortedModels.forEach(model => {
                 const option = document.createElement('option');
                 option.value = model;
                 option.textContent = model;
                 modelSelect.appendChild(option);
-            }
+            });
         }
     });
 }
-
-// function resetToMainMenu() {
-//     const brandSelect = document.getElementById('brandSelect');
-//     const yearSelect = document.getElementById('yearSelect');
-//     const modelSelect = document.getElementById('modelSelect');
-//     const outputField = document.getElementById('outputField');
-//     const returnButton = document.getElementById('returnButton');
-
-//     // Reset dropdowns
-//     brandSelect.value = '';
-//     yearSelect.innerHTML = '<option value="">Select Year</option>';
-//     modelSelect.innerHTML = '<option value="">Select Model</option>';
-
-//     // Clear displayed images
-//     outputField.innerHTML = '';
-
-//     // Hide the return button
-//     returnButton.style.display = 'none';
-// }
 
 // Show the return button when sorting is applied
 function displayFilteredImages() {
@@ -184,6 +175,13 @@ function displayFilteredImages() {
             img.style.width = '200px'; // Adjust size as needed
             img.style.margin = '10px';
 
+            // Перевірка Intrinsic size
+            img.onload = () => {
+                if (img.naturalWidth === 1 && img.naturalHeight === 1) {
+                    img.remove(); // Видаляємо картинку, якщо її розмір 1x1
+                }
+            };
+
             outputField.appendChild(img);
         });
 
@@ -198,26 +196,3 @@ function displayFilteredImages() {
 document.getElementById('sortButton').addEventListener('click', displayFilteredImages);
 // document.getElementById('returnButton').addEventListener('click', resetToMainMenu);
 
-document.addEventListener("DOMContentLoaded", () => {
-    const imageContainer = document.querySelector(".image-container");
-
-    // Завантаження джерел картинок із JSON
-    fetch("image_sources.json")
-        .then((response) => response.json())
-        .then((images) => {
-            images.forEach((src) => {
-                const img = document.createElement("img");
-                img.src = src;
-
-                // Якщо картинка не завантажується, додаємо клас "hidden"
-                img.onerror = () => {
-                    img.classList.add("hidden");
-                };
-
-                imageContainer.appendChild(img);
-            });
-        })
-        .catch((error) => {
-            console.error("Error loading images:", error);
-        });
-});
