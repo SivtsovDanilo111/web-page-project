@@ -194,6 +194,18 @@ function displayFilteredImages() {
 
 // Функція для показу модального вікна з картинкою та інформацією
 function showImageModal(imageUrl, brand, model, year) {
+    // Отримуємо всі зображення для навігації
+    const allImages = Object.values(sortedData[brand][year][model]);
+
+    // Фільтруємо тільки ті зображення, які мають валідні розміри (не 1x1 піксель)
+    const visibleImages = allImages.filter((src) => {
+        const img = new Image();
+        img.src = src;
+        return img.naturalWidth > 1 && img.naturalHeight > 1; // Виключаємо 1x1 піксель
+    });
+
+    let currentIndex = visibleImages.indexOf(imageUrl);
+
     // Створюємо затемнення
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';
@@ -217,8 +229,8 @@ function showImageModal(imageUrl, brand, model, year) {
     const enlargedImg = document.createElement('img');
     enlargedImg.src = imageUrl;
     enlargedImg.alt = `${brand} ${model} ${year}`;
-    enlargedImg.style.maxWidth = '80%';
-    enlargedImg.style.maxHeight = '80%';
+    enlargedImg.style.width = '700px'; // Adjust size as needed
+    enlargedImg.style.height = '500px';
     enlargedImg.style.borderRadius = '8px';
     enlargedImg.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.5)';
 
@@ -228,8 +240,39 @@ function showImageModal(imageUrl, brand, model, year) {
     infoText.style.marginTop = '20px';
     infoText.style.fontSize = '18px';
 
-    // Додаємо картинку та текст до контейнера
+    // Додаємо кнопки для навігації
+    const leftArrow = document.createElement('button');
+    leftArrow.textContent = '←';
+    leftArrow.style.position = 'absolute';
+    leftArrow.style.left = '10px';
+    leftArrow.style.top = '50%';
+    leftArrow.style.transform = 'translateY(-50%)';
+    leftArrow.style.fontSize = '24px';
+    leftArrow.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    leftArrow.style.color = 'white';
+    leftArrow.style.border = 'none';
+    leftArrow.style.cursor = 'pointer';
+    leftArrow.style.padding = '10px';
+    leftArrow.style.borderRadius = '50%';
+
+    const rightArrow = document.createElement('button');
+    rightArrow.textContent = '→';
+    rightArrow.style.position = 'absolute';
+    rightArrow.style.right = '10px';
+    rightArrow.style.top = '50%';
+    rightArrow.style.transform = 'translateY(-50%)';
+    rightArrow.style.fontSize = '24px';
+    rightArrow.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    rightArrow.style.color = 'white';
+    rightArrow.style.border = 'none';
+    rightArrow.style.cursor = 'pointer';
+    rightArrow.style.padding = '10px';
+    rightArrow.style.borderRadius = '50%';
+
+    // Додаємо картинку, текст і кнопки до контейнера
+    modalContent.appendChild(leftArrow);
     modalContent.appendChild(enlargedImg);
+    modalContent.appendChild(rightArrow);
     modalContent.appendChild(infoText);
 
     // Додаємо контейнер до затемнення
@@ -238,9 +281,46 @@ function showImageModal(imageUrl, brand, model, year) {
     // Додаємо затемнення до документа
     document.body.appendChild(overlay);
 
+    // Функція для оновлення картинки
+    function updateImage(index) {
+        enlargedImg.src = visibleImages[index];
+        currentIndex = index;
+    }
+
+    // Обробники подій для кнопок
+    leftArrow.addEventListener('click', () => {
+        const prevIndex = (currentIndex - 1 + visibleImages.length) % visibleImages.length;
+        updateImage(prevIndex);
+    });
+
+    rightArrow.addEventListener('click', () => {
+        const nextIndex = (currentIndex + 1) % visibleImages.length;
+        updateImage(nextIndex);
+    });
+
+    // Обробник подій для клавіш
+    function handleKeydown(event) {
+        if (event.key === 'ArrowRight') {
+            const nextIndex = (currentIndex + 1) % visibleImages.length;
+            updateImage(nextIndex);
+        } else if (event.key === 'ArrowLeft') {
+            const prevIndex = (currentIndex - 1 + visibleImages.length) % visibleImages.length;
+            updateImage(prevIndex);
+        } else if (event.key === 'Escape') {
+            overlay.remove();
+            document.removeEventListener('keydown', handleKeydown);
+        }
+    }
+
+    // Додаємо обробник подій для клавіш
+    document.addEventListener('keydown', handleKeydown);
+
     // Закриття модального вікна при натисканні на затемнення
-    overlay.addEventListener('click', () => {
-        overlay.remove();
+    overlay.addEventListener('click', (event) => {
+        if (!modalContent.contains(event.target)) {
+            overlay.remove();
+            document.removeEventListener('keydown', handleKeydown);
+        }
     });
 }
 
