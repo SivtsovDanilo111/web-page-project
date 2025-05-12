@@ -97,13 +97,13 @@ function fetchAndSortImages() {
 
 function populateDropdowns() {
     const brandSelect = document.getElementById('brandSelect');
-    const yearSelect = document.getElementById('yearSelect');
     const modelSelect = document.getElementById('modelSelect');
+    const yearSelect = document.getElementById('yearSelect');
 
     // Clear existing options
     brandSelect.innerHTML = '<option value="">Select Brand</option>';
-    yearSelect.innerHTML = '<option value="">Select Year</option>';
     modelSelect.innerHTML = '<option value="">Select Model</option>';
+    yearSelect.innerHTML = '<option value="">Select Year</option>';
 
     // Сортуємо бренди в алфавітному порядку
     const sortedBrands = Object.keys(sortedData).sort();
@@ -116,40 +116,49 @@ function populateDropdowns() {
         brandSelect.appendChild(option);
     });
 
-    // Update year dropdown when brand changes
+    // Update model dropdown when brand changes
     brandSelect.addEventListener('change', () => {
         const selectedBrand = brandSelect.value;
-        yearSelect.innerHTML = '<option value="">Select Year</option>';
         modelSelect.innerHTML = '<option value="">Select Model</option>';
+        yearSelect.innerHTML = '<option value="">Select Year</option>';
 
         if (selectedBrand && sortedData[selectedBrand]) {
-            // Сортуємо роки в алфавітному порядку
-            const sortedYears = Object.keys(sortedData[selectedBrand]).sort();
-
-            sortedYears.forEach(year => {
-                const option = document.createElement('option');
-                option.value = year;
-                option.textContent = year;
-                yearSelect.appendChild(option);
-            });
-        }
-    });
-
-    // Update model dropdown when year changes
-    yearSelect.addEventListener('change', () => {
-        const selectedBrand = brandSelect.value;
-        const selectedYear = yearSelect.value;
-        modelSelect.innerHTML = '<option value="">Select Model</option>';
-
-        if (selectedBrand && selectedYear && sortedData[selectedBrand][selectedYear]) {
             // Сортуємо моделі в алфавітному порядку
-            const sortedModels = Object.keys(sortedData[selectedBrand][selectedYear]).sort();
+            const sortedModels = Object.keys(sortedData[selectedBrand]).reduce((models, year) => {
+                Object.keys(sortedData[selectedBrand][year]).forEach(model => {
+                    if (!models.includes(model)) {
+                        models.push(model);
+                    }
+                });
+                return models;
+            }, []).sort();
 
             sortedModels.forEach(model => {
                 const option = document.createElement('option');
                 option.value = model;
                 option.textContent = model;
                 modelSelect.appendChild(option);
+            });
+        }
+    });
+
+    // Update year dropdown when model changes
+    modelSelect.addEventListener('change', () => {
+        const selectedBrand = brandSelect.value;
+        const selectedModel = modelSelect.value;
+        yearSelect.innerHTML = '<option value="">Select Year</option>';
+
+        if (selectedBrand && selectedModel) {
+            // Сортуємо роки в алфавітному порядку
+            const sortedYears = Object.keys(sortedData[selectedBrand]).filter(year => {
+                return sortedData[selectedBrand][year][selectedModel];
+            }).sort();
+
+            sortedYears.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
             });
         }
     });

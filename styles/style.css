@@ -12,6 +12,7 @@ body {
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
+    animation: fadeIn 1s ease-in-out;
 }
 
 input[type="text"] {
@@ -29,10 +30,19 @@ button {
     background-color: #007bff;
     color: white;
     cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    z-index: 10; /* Встановіть значення вище, ніж у зображення */
 }
 
 button:hover {
     background-color: #0056b3;
+    transform: scale(1.2); /* Збільшення стрілочки */
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.5); /* Додавання тіні */
+}
+
+button:active {
+    transform: scale(1.1); /* Легке зменшення при натисканні */
+    background-color: rgba(0, 123, 255, 1); /* Інтенсивніший колір */
 }
 
 .output {
@@ -52,3 +62,54 @@ button:hover {
  /* .image-container img.hidden {
     display: none;
 }   */
+
+/* Анімація для випадаючих списків */
+select {
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    transform-origin: top;
+}
+
+select:focus {
+    border-color: #007BFF;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    transform: scale(1.05); /* Легке збільшення при фокусі */
+}
+
+/* Анімація для опцій у випадаючому меню */
+select option {
+    animation: fadeInOptions 0.5s ease-in-out;
+}
+
+/* Ключові кадри для fadeInOptions */
+@keyframes fadeInOptions {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Анімація для зображень */
+img {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Ключові кадри для анімації fadeIn */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
